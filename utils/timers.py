@@ -13,7 +13,7 @@ class CudaTimer:
         if self.timer_name not in cuda_timers:
             cuda_timers[self.timer_name] = []
 
-        self.start = torch.cuda.Event(enable_timing=True)
+        self.start = torch.cuda.Event(enable_timing=False)
         self.end = torch.cuda.Event(enable_timing=True)
 
     def __enter__(self):

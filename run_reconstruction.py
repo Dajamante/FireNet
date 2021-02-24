@@ -18,7 +18,8 @@ if __name__ == "__main__":
     parser.add_argument('-c', '--path_to_model', required=True, type=str,
                         help='path to model weights')
     parser.add_argument('-i', '--input_file', required=True, type=str)
-    parser.add_argument('--fixed_duration', dest='fixed_duration', action='store_true')
+    parser.add_argument('--fixed_duration',
+                        dest='fixed_duration', action='store_true')
     parser.set_defaults(fixed_duration=False)
     parser.add_argument('-N', '--window_size', default=None, type=int,
                         help="Size of each event window, in number of events. Ignored if --fixed_duration=True")
@@ -29,7 +30,8 @@ if __name__ == "__main__":
                               automatically computed as N = width * height * num_events_per_pixel')
     parser.add_argument('--skipevents', default=0, type=int)
     parser.add_argument('--suboffset', default=0, type=int)
-    parser.add_argument('--compute_voxel_grid_on_cpu', dest='compute_voxel_grid_on_cpu', action='store_true')
+    parser.add_argument('--compute_voxel_grid_on_cpu',
+                        dest='compute_voxel_grid_on_cpu', action='store_true')
     parser.set_defaults(compute_voxel_grid_on_cpu=False)
 
     set_inference_options(parser)
@@ -47,12 +49,14 @@ if __name__ == "__main__":
 
     # Load model
     model = load_model(args.path_to_model)
+
     device = get_device(args.use_gpu)
 
     model = model.to(device)
     model.eval()
 
-    reconstructor = ImageReconstructor(model, height, width, model.num_bins, args)
+    reconstructor = ImageReconstructor(
+        model, height, width, model.num_bins, args)
 
     """ Read chunks of events using Pandas """
 
@@ -85,7 +89,8 @@ if __name__ == "__main__":
                                                          duration_ms=args.window_duration,
                                                          start_index=start_index)
     else:
-        event_window_iterator = FixedSizeEventReader(path_to_events, num_events=N, start_index=start_index)
+        event_window_iterator = FixedSizeEventReader(
+            path_to_events, num_events=N, start_index=start_index)
 
     with Timer('Processing entire dataset'):
         for event_window in event_window_iterator:
@@ -107,6 +112,7 @@ if __name__ == "__main__":
                                                                 device=device)
 
             num_events_in_window = event_window.shape[0]
-            reconstructor.update_reconstruction(event_tensor, start_index + num_events_in_window, last_timestamp)
+            reconstructor.update_reconstruction(
+                event_tensor, start_index + num_events_in_window, last_timestamp)
 
             start_index += num_events_in_window
